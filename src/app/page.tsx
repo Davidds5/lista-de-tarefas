@@ -1,10 +1,22 @@
 import { Button } from "@/components/ui/button"
+import { Card, CardHeader, CardTitle, CardDescription, CardAction, CardContent, CardFooter } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Separator } from "@/components/ui/separator"
+import { Plus } from 'lucide-react';
 
 const Home = () => {
   return(
-  <div>
-    <Button variant={"destructive"}>Cadrasta</Button>
-  </div>
+  <main className="w-full h-screen bg-gray-100 flex justify-center items-center">
+   <Card className="w-lg p-4">
+   <div className="flex gap-2">
+    
+       <Input  placeholder="Adicionar tarefa"/>
+       <Button variant={"outline"} className="cursor-pointer"> <Plus/>Cadrasta</Button>
+    </div>
+    <Separator />
+   
+   </Card>
+  </main>
  )
 }
 

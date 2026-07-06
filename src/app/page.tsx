@@ -1,11 +1,11 @@
+import EditTask from "@/components/edit-task";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
-import { Plus, List, Check, X, SquarePen, Trash, ListCheck, Sigma } from 'lucide-react';
+import { Plus, List, Check, X, Trash, ListCheck, Sigma } from 'lucide-react';
 
 
 const Home = () => {
@@ -33,26 +33,13 @@ const Home = () => {
             <div className="w-1 h-full bg-green-300"></div>
             <p className=" text-sm flex-1 px-2">Teste de mesa</p>
             <div className="flex items-center gap-1">
-              <Dialog>
-                <DialogTrigger asChild>
-                  <SquarePen size={16} className="cursor-pointer" />
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Editar Tarefa</DialogTitle>
-                  </DialogHeader>
-                  <div>
-                    <Input className="mb-2" placeholder="Editar Tarefa ..." />
-                    <Button className="cursor-pointer">Editar</Button>
-                  </div>
-                </DialogContent>
-              </Dialog>
+
+              <EditTask />
+
               <Trash size={16} className="cursor-pointer" />
             </div>
           </div>
         </div>
-
-
 
         { /**Area tarefas concluidas, Limpar tarefas  */}
         <div className=" flex justify-between items-center mt-4">
@@ -75,9 +62,6 @@ const Home = () => {
           <Sigma size={16} />
           <p className="text-xs">3 Tarefas no Total</p>
         </div>
-
-
-
 
         <AlertDialog>
           <AlertDialogTrigger asChild>

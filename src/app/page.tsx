@@ -2,6 +2,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
 import { Plus, List, Check, X, SquarePen, Trash, ListCheck, Sigma } from 'lucide-react';
@@ -11,11 +12,12 @@ const Home = () => {
   return (
     <main className="w-full h-screen bg-gray-100 flex justify-center items-center">
       <Card className="w-lg p-6">
-        <div className="flex gap-2">
 
+        <div className="flex gap-2">
           <Input placeholder="Adicionar tarefa" />
           <Button variant={"default"} className="cursor-pointer"> <Plus />Cadastra</Button>
         </div>
+
         <Separator />
 
         { /**tags de finalizados pendentes e concluidos*/}
@@ -26,16 +28,31 @@ const Home = () => {
         </div>
 
         {/**Lista de tarefas */}
-        <div className="  border-b-1 border-t-1">
+        <div className="  border-b-1">
           <div className="h-10 flex justify-between items-center border-t-1 ">
             <div className="w-1 h-full bg-green-300"></div>
             <p className=" text-sm flex-1 px-2">Teste de mesa</p>
             <div className="flex items-center gap-1">
-              <SquarePen size={16} className="cursor-pointer" />
+              <Dialog>
+                <DialogTrigger asChild>
+                  <SquarePen size={16} className="cursor-pointer" />
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Editar Tarefa</DialogTitle>
+                  </DialogHeader>
+                  <div>
+                    <Input className="mb-2" placeholder="Editar Tarefa ..." />
+                    <Button className="cursor-pointer">Editar</Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
               <Trash size={16} className="cursor-pointer" />
             </div>
           </div>
         </div>
+
+
 
         { /**Area tarefas concluidas, Limpar tarefas  */}
         <div className=" flex justify-between items-center mt-4">
@@ -60,6 +77,8 @@ const Home = () => {
         </div>
 
 
+
+
         <AlertDialog>
           <AlertDialogTrigger asChild>
             <Button className="text-xs h-7 cursor-pointer" variant={"outline"}>Limpar tarefas concluidas</Button>
@@ -70,8 +89,8 @@ const Home = () => {
               <AlertDialogTitle>Tem certeza que deseja excluir x itens ?</AlertDialogTitle>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel className="cursor-pointer">Cancelar</AlertDialogCancel>
               <AlertDialogAction className="cursor-pointer">Sim, excluir</AlertDialogAction>
+              <AlertDialogCancel className="cursor-pointer">Cancelar</AlertDialogCancel>
             </AlertDialogFooter>
 
 

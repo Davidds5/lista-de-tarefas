@@ -1,5 +1,5 @@
 import EditTask from "@/components/edit-task";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -34,6 +34,7 @@ const Home = () => {
             <p className=" text-sm flex-1 px-2">Teste de mesa</p>
             <div className="flex items-center gap-1">
 
+              {/**edit-task.tsx */}
               <EditTask />
 
               <Trash size={16} className="cursor-pointer" />

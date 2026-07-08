@@ -9,7 +9,7 @@ datasource db {
 }
 
 model Task {
-  id   String  @id @default(cuid())
+  id   String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   task String
   done Boolean @default(false)
 }

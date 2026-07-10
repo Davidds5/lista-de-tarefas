@@ -7,8 +7,10 @@ export const getTasks = async () => {
 
         if (!tasks) return
 
+        console.log("tarefas buscadas no banco: ", tasks)
         return tasks
     } catch (error) {
+        console.error("Erro ao buscar tarefas: ", error)
         throw error
     }
 }

@@ -1,3 +1,4 @@
+"use client"
 import EditTask from "@/components/edit-task";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
@@ -6,9 +7,26 @@ import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
 import { Plus, List, Check, X, Trash, ListCheck, Sigma } from 'lucide-react';
-
+import { getTasks } from "@/_actions/get_task_from_db";
+import { useState, useEffect } from "react";
+import { Task } from "@/generated/prisma/client";
+import { TaskScalarFieldEnum } from "@/generated/prisma/internal/prismaNamespace";
 
 const Home = () => {
+
+  const [minhasTarefas, settualizarTarefas] = useState<Task[]>([])
+
+  const handleGetTask = async () => {
+    const task = await getTasks();
+
+    if (!task) return
+
+    setatualizarTarefas(task)
+  }
+
+  console.log(minhasTarefas)
+
+
   return (
     <main className="w-full h-screen bg-gray-100 flex justify-center items-center">
       <Card className="w-lg p-6">
@@ -18,7 +36,10 @@ const Home = () => {
           <Button variant={"default"} className="cursor-pointer"> <Plus />Cadastra</Button>
         </div>
 
-        <Separator />
+
+        <Button onClick={handleGetTask}>Busca Tarefas</Button>
+
+        <Separator className="mt-4" />
 
         { /**tags de finalizados pendentes e concluidos*/}
         <div className="flex py-2 gap-2">
@@ -89,4 +110,5 @@ const Home = () => {
     </main >
   )
 }
+
 export default Home

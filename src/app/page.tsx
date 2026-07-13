@@ -14,7 +14,7 @@ import { TaskScalarFieldEnum } from "@/generated/prisma/internal/prismaNamespace
 
 const Home = () => {
 
-  const [minhasTarefas, settualizarTarefas] = useState<Task[]>([])
+  const [minhasTarefas, setatualizarTarefas] = useState<Task[]>([])
 
   const handleGetTask = async () => {
     const task = await getTasks();

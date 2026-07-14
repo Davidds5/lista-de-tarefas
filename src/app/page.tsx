@@ -11,33 +11,52 @@ import { getTasks } from "@/_actions/get_task_from_db";
 import { useState, useEffect } from "react";
 import { Task } from "@/generated/prisma/client";
 import { TaskScalarFieldEnum } from "@/generated/prisma/internal/prismaNamespace";
+import { newTask } from "@/_actions/add_task";
 
 const Home = () => {
 
   const [minhasTarefas, setatualizarTarefas] = useState<Task[]>([])
+  const [inputTarefa, setInputTarefa] = useState<string>('')
 
   const handleGetTask = async () => {
-    const task = await getTasks();
+    try {
+      const task = await getTasks();
+      if (!task) return
 
-    if (!task) return
+      setatualizarTarefas(task)
 
-    setatualizarTarefas(task)
+    } catch (error) {
+      throw (error)
+    }
+
+
   }
 
-  console.log(minhasTarefas)
 
+  const handleAddTask = async () => {
+
+    if (inputTarefa.length === 0 || !inputTarefa) return
+
+
+    await newTask(inputTarefa)
+    await handleGetTask()
+    setInputTarefa('')
+  }
+
+
+  useEffect(() => {
+    handleGetTask()
+  }, [])
 
   return (
     <main className="w-full h-screen bg-gray-100 flex justify-center items-center">
       <Card className="w-lg p-6">
 
         <div className="flex gap-2">
-          <Input placeholder="Adicionar tarefa" />
-          <Button variant={"default"} className="cursor-pointer"> <Plus />Cadastra</Button>
+          <Input placeholder="Adicionar tarefa" value={inputTarefa} onChange={(e) => setInputTarefa(e.target.value)} />
+          <Button variant={"default"} className="cursor-pointer" onClick={handleAddTask} > <Plus />Cadastra</Button>
         </div>
 
-
-        <Button onClick={handleGetTask}>Busca Tarefas</Button>
 
         <Separator className="mt-4" />
 
@@ -50,17 +69,19 @@ const Home = () => {
 
         {/**Lista de tarefas */}
         <div className="  border-b-1">
-          <div className="h-10 flex justify-between items-center border-t-1 ">
-            <div className="w-1 h-full bg-green-300"></div>
-            <p className=" text-sm flex-1 px-2">Teste de mesa</p>
-            <div className="flex items-center gap-1">
 
-              {/**edit-task.tsx */}
-              <EditTask />
+          {minhasTarefas.map(task =>
+            <div key={task.id} className="h-10 flex justify-between items-center border-t-1 ">
+              <div className="w-1 h-full bg-green-300"></div>
+              <p className=" text-sm flex-1 px-2">{task.task}</p>
+              <div className="flex items-center gap-1">
 
-              <Trash size={16} className="cursor-pointer" />
-            </div>
-          </div>
+                {/**edit-task.tsx */}
+                <EditTask />
+
+                <Trash size={16} className="cursor-pointer" />
+              </div>
+            </div>)}
         </div>
 
         { /**Area tarefas concluidas, Limpar tarefas  */}

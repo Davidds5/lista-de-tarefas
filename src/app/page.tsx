@@ -12,10 +12,11 @@ import { useState, useEffect } from "react";
 import { Task } from "@/generated/prisma/client";
 import { TaskScalarFieldEnum } from "@/generated/prisma/internal/prismaNamespace";
 import { newTask } from "@/_actions/add_task";
+import { deletTask } from "@/_actions/delete_task";
 
 const Home = () => {
 
-  const [minhasTarefas, setatualizarTarefas] = useState<Task[]>([])
+  const [minhasTarefas, setAtualizarTarefas] = useState<Task[]>([])
   const [inputTarefa, setInputTarefa] = useState<string>('')
 
   const handleGetTask = async () => {
@@ -23,9 +24,10 @@ const Home = () => {
       const task = await getTasks();
       if (!task) return
 
-      setatualizarTarefas(task)
+      setAtualizarTarefas(task)
 
     } catch (error) {
+      console.error("Erro ao buscar tarefas: ", error)
       throw (error)
     }
 
@@ -41,6 +43,15 @@ const Home = () => {
     await newTask(inputTarefa)
     await handleGetTask()
     setInputTarefa('')
+  }
+
+  const handleDeleteTask = async (id: string) => {
+    try {
+      await deletTask(id)
+      await handleGetTask()
+    } catch (error) {
+      console.error("Erro ao deletar tarefa:", error)
+    }
   }
 
 
@@ -77,9 +88,13 @@ const Home = () => {
               <div className="flex items-center gap-1">
 
                 {/**edit-task.tsx */}
-                <EditTask />
+                <EditTask task={task} onUpdate={handleGetTask} />
 
-                <Trash size={16} className="cursor-pointer" />
+                <Trash
+                  size={16}
+                  className="cursor-pointer text-red-500 hover:text-red-700 transition-colors"
+                  onClick={() => handleDeleteTask(task.id)}
+                />
               </div>
             </div>)}
         </div>

@@ -1,5 +1,5 @@
 "use server"
-import { Task } from "@/generated/prisma/client"
+
 import prisma from "@/util/prisma"
 
 export const deletTask = async (idTask: string) => {
@@ -17,6 +17,7 @@ export const deletTask = async (idTask: string) => {
         return deletTask
 
     } catch (error) {
+        console.error("Erro ao deletar tarefa", error)
         throw error
     }
 }

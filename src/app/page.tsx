@@ -13,11 +13,13 @@ import { Task } from "@/generated/prisma/client";
 import { TaskScalarFieldEnum } from "@/generated/prisma/internal/prismaNamespace";
 import { newTask } from "@/_actions/add_task";
 import { deletTask } from "@/_actions/delete_task";
+import { toggerTaskDone } from "@/_actions/toggle_task";
 
 const Home = () => {
 
   const [minhasTarefas, setAtualizarTarefas] = useState<Task[]>([])
   const [inputTarefa, setInputTarefa] = useState<string>('')
+
 
   const handleGetTask = async () => {
     try {
@@ -51,6 +53,17 @@ const Home = () => {
       await handleGetTask()
     } catch (error) {
       console.error("Erro ao deletar tarefa:", error)
+    }
+  }
+
+  const handleToggerTaskDone = async (id: string, currentStatus: boolean) => {
+    try {
+      await toggerTaskDone(id, currentStatus)
+      await handleGetTask();
+
+    } catch (error) {
+      console.error("Erro ao alterna status ", error)
+      throw error
     }
   }
 

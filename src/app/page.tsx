@@ -7,13 +7,13 @@ import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
 import { Plus, List, Check, X, Trash, ListCheck, Sigma } from 'lucide-react';
-import { getTasks } from "@/_actions/get_task_from_db";
+import { obterTarefas } from "@/_actions/get_task_from_db";
 import { useState, useEffect } from "react";
 import { Task } from "@/generated/prisma/client";
 import { TaskScalarFieldEnum } from "@/generated/prisma/internal/prismaNamespace";
-import { newTask } from "@/_actions/add_task";
-import { deletTask } from "@/_actions/delete_task";
-import { toggerTaskDone } from "@/_actions/toggle_task";
+import { adicionarTarefa } from "@/_actions/add_task";
+import { deletarTarefa } from "@/_actions/delete_task";
+import { alternarStatusTarefa } from "@/_actions/toggle_task";
 
 const Home = () => {
 
@@ -21,12 +21,12 @@ const Home = () => {
   const [inputTarefa, setInputTarefa] = useState<string>('')
 
 
-  const handleGetTask = async () => {
+  const handleBuscarTarefas = async () => {
     try {
-      const task = await getTasks();
-      if (!task) return
+      const tarefasObtidas = await obterTarefas();
+      if (!tarefasObtidas) return
 
-      setAtualizarTarefas(task)
+      setAtualizarTarefas(tarefasObtidas)
 
     } catch (error) {
       console.error("Erro ao buscar tarefas: ", error)
@@ -37,40 +37,46 @@ const Home = () => {
   }
 
 
-  const handleAddTask = async () => {
+  const handleAdicionarTarefa = async () => {
 
     if (inputTarefa.length === 0 || !inputTarefa) return
 
 
-    await newTask(inputTarefa)
-    await handleGetTask()
+    await adicionarTarefa(inputTarefa)
+    await handleBuscarTarefas()
     setInputTarefa('')
   }
 
-  const handleDeleteTask = async (id: string) => {
+  const handleDeletarTarefa = async (id: string) => {
     try {
-      await deletTask(id)
-      await handleGetTask()
+      await deletarTarefa(id)
+      await handleBuscarTarefas()
     } catch (error) {
       console.error("Erro ao deletar tarefa:", error)
     }
   }
 
-  const handleToggerTaskDone = async (id: string, currentStatus: boolean) => {
+  const handleAlternarTarefa = async (id: string, statusAtual: boolean) => {
     try {
-      await toggerTaskDone(id, currentStatus)
-      await handleGetTask();
+      await alternarStatusTarefa(id, statusAtual)
+      await handleBuscarTarefas();
 
     } catch (error) {
-      console.error("Erro ao alterna status ", error)
+      console.error("Erro ao alternar status ", error)
       throw error
     }
   }
 
 
   useEffect(() => {
-    handleGetTask()
+    handleBuscarTarefas()
   }, [])
+
+
+  const totalDeTarefas = minhasTarefas.length;
+  const tarefaConluidas = minhasTarefas.filter(tarefa => tarefa.done).length
+  const porcentagemProgresso = totalDeTarefas > 0 ? (tarefaConluidas / totalDeTarefas) * 100 : 0;
+
 
   return (
     <main className="w-full h-screen bg-gray-100 flex justify-center items-center">
@@ -78,7 +84,7 @@ const Home = () => {
 
         <div className="flex gap-2">
           <Input placeholder="Adicionar tarefa" value={inputTarefa} onChange={(e) => setInputTarefa(e.target.value)} />
-          <Button variant={"default"} className="cursor-pointer" onClick={handleAddTask} > <Plus />Cadastra</Button>
+          <Button variant={"default"} className="cursor-pointer" onClick={handleAdicionarTarefa} > <Plus />Cadastra</Button>
         </div>
 
 
@@ -96,17 +102,21 @@ const Home = () => {
 
           {minhasTarefas.map(task =>
             <div key={task.id} className="h-10 flex justify-between items-center border-t-1 ">
-              <div className="w-1 h-full bg-green-300"></div>
-              <p className=" text-sm flex-1 px-2">{task.task}</p>
+              <div className="w-1 h-full bg-blue-400"></div>
+
+              <p className={`text-sm flex-1 px-2 cursor-pointer hover:text-gray-700 ${task.done ? `line-through text-gray-400` : ''}`}
+                onClick={() => handleAlternarTarefa(task.id, task.done)}>
+                {task.task}
+              </p>
               <div className="flex items-center gap-1">
 
                 {/**edit-task.tsx */}
-                <EditTask task={task} onUpdate={handleGetTask} />
+                <EditTask task={task} onUpdate={handleBuscarTarefas} />
 
                 <Trash
                   size={16}
                   className="cursor-pointer text-red-500 hover:text-red-700 transition-colors"
-                  onClick={() => handleDeleteTask(task.id)}
+                  onClick={() => handleDeletarTarefa(task.id)}
                 />
               </div>
             </div>)}
@@ -116,7 +126,7 @@ const Home = () => {
         <div className=" flex justify-between items-center mt-4">
           <div className="flex gap-1 items-center">
             <ListCheck size={16} />
-            <p className="text-xs">tarefas concluidas (1/1)</p>
+            <p className="text-xs">tarefas concluidas ({tarefaConluidas} / {totalDeTarefas})</p>
           </div>
           <Button className="text-xs h-6 cursor-pointer"><Trash />
             Limpar tarefas concluidas
@@ -125,13 +135,13 @@ const Home = () => {
 
         { /** Barra de porcentagem*/}
         <div className="w-full h-2 bg-gray-200 rounded-md mt-2">
-          <div className="h-full bg-blue-500 rounded-md" style={{ width: "50%" }}></div>
+          <div className="h-full bg-blue-500 rounded-md" style={{ width: `${porcentagemProgresso}%` }}></div>
         </div>
 
         { /**Tarefas no total */}
         <div className="flex mt-2 justify-end items-center gap-1">
           <Sigma size={16} />
-          <p className="text-xs">3 Tarefas no Total</p>
+          <p className="text-xs">{totalDeTarefas} Tarefas no Total</p>
         </div>
 
         <AlertDialog>

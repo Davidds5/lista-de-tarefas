@@ -2,19 +2,19 @@
 
 import prisma from "@/util/prisma"
 
-export const deletTask = async (idTask: string) => {
+export const deletarTarefa = async (idTarefa: string) => {
 
     try {
-        if (!idTask) return
+        if (!idTarefa) return
 
-        const deletTask = await prisma.task.delete({
+        const tarefaDeletada = await prisma.task.delete({
             where: {
-                id: idTask
+                id: idTarefa
             }
         })
-        if (!deletTask) return
+        if (!tarefaDeletada) return
 
-        return deletTask
+        return tarefaDeletada
 
     } catch (error) {
         console.error("Erro ao deletar tarefa", error)

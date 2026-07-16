@@ -1,11 +1,11 @@
 "use server"
 import prisma from "@/util/prisma"
 
-export const newTask = async (task: string) => {
+export const adicionarTarefa = async (textoTarefa: string) => {
     try {
         await prisma.task.create({
             data: {
-                task: task,
+                task: textoTarefa,
             }
         })
         console.log("Tarefa criada com sucesso!")

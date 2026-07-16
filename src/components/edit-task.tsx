@@ -5,7 +5,7 @@ import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { useState } from "react";
 import { Task } from "@/generated/prisma/client";
-import { updateTask } from "@/_actions/update_task";
+import { atualizarTarefa } from "@/_actions/update_task";
 
 interface EditTaskProps {
     task: Task;
@@ -18,7 +18,7 @@ const EditTask = ({ task, onUpdate }: EditTaskProps) => {
 
     const handleSave = async () => {
         if (!currentTaskText.trim()) return;
-        await updateTask(task.id, currentTaskText);
+        await atualizarTarefa(task.id, currentTaskText);
         onUpdate();
 
     }

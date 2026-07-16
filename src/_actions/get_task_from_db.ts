@@ -1,14 +1,14 @@
 "use server"
 import prisma from "@/util/prisma"
 
-export const getTasks = async () => {
+export const obterTarefas = async () => {
     try {
-        const tasks = await prisma.task.findMany()
+        const tarefas = await prisma.task.findMany()
 
-        if (!tasks) return
+        if (!tarefas) return
 
-        console.log("tarefas buscadas no banco: ", tasks)
-        return tasks
+        console.log("tarefas buscadas no banco: ", tarefas)
+        return tarefas
     } catch (error) {
         console.error("Erro ao buscar tarefas: ", error)
         throw error

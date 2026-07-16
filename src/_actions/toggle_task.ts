@@ -1,21 +1,21 @@
 "use server"
 import prisma from "@/util/prisma"
 
-export const toggerTaskDone = async (idTask: string, currentStatus: boolean) => {
+export const alternarStatusTarefa = async (idTarefa: string, statusAtual: boolean) => {
     try {
-        if (!idTask) return
+        if (!idTarefa) return
 
-        const updated = await prisma.task.update({
+        const tarefaAtualizada = await prisma.task.update({
             where: {
-                id: idTask
+                id: idTarefa
             },
             data: {
-                done: !currentStatus // inverte o valor, se for true vira false, 
+                done: !statusAtual // inverte o valor, se for true vira false, 
                 // se for false vira true
             }
         })
 
-        return updated
+        return tarefaAtualizada
 
     } catch (error) {
         console.error("Erro ao alterna status de tarefa: ", error)

@@ -1,23 +1,23 @@
 "use server"
 import prisma from "@/util/prisma"
 
-export const updateTask = async (idTask: string, newTask: string) => {
+export const atualizarTarefa = async (idTarefa: string, novoTextoTarefa: string) => {
 
     try {
-        if (!idTask || !newTask) return
+        if (!idTarefa || !novoTextoTarefa) return
 
         {/**Forma padrao para atualizar com o prisma para atualizar um unico registro*/ }
-        const updateTask = await prisma.task.update({
+        const tarefaAtualizada = await prisma.task.update({
             where: {
-                id: idTask
+                id: idTarefa
             },
             data: {
-                task: newTask
+                task: novoTextoTarefa
 
             }
         })
 
-        return updateTask
+        return tarefaAtualizada
 
     } catch (error) {
         console.error("Error ao atualizar tarefa: ", error)

@@ -10,15 +10,15 @@ import { Plus, List, Check, X, Trash, ListCheck, Sigma } from 'lucide-react';
 import { obterTarefas } from "@/_actions/get_task_from_db";
 import { useState, useEffect } from "react";
 import { Task } from "@/generated/prisma/client";
-import { TaskScalarFieldEnum } from "@/generated/prisma/internal/prismaNamespace";
 import { adicionarTarefa } from "@/_actions/add_task";
-import { deletarTarefa } from "@/_actions/delete_task";
+import { deletarTarefa, excluirTarefasConcluidas } from "@/_actions/delete_task";
 import { alternarStatusTarefa } from "@/_actions/toggle_task";
 
 const Home = () => {
 
   const [minhasTarefas, setAtualizarTarefas] = useState<Task[]>([])
   const [inputTarefa, setInputTarefa] = useState<string>('')
+  const [filtro, setFiltro] = useState<'todas' | 'pendentes' | 'concluidas'>('todas')
 
 
   const handleBuscarTarefas = async () => {
@@ -56,6 +56,16 @@ const Home = () => {
     }
   }
 
+  const handleExcluirTarefaConcluida = async () => {
+    try {
+      await excluirTarefasConcluidas();
+      await handleBuscarTarefas();
+
+    } catch (error) {
+      console.error("Error ao busca concluidas: ", error);
+    }
+  }
+
   const handleAlternarTarefa = async (id: string, statusAtual: boolean) => {
     try {
       await alternarStatusTarefa(id, statusAtual)
@@ -76,7 +86,11 @@ const Home = () => {
   const totalDeTarefas = minhasTarefas.length;
   const tarefaConluidas = minhasTarefas.filter(tarefa => tarefa.done).length
   const porcentagemProgresso = totalDeTarefas > 0 ? (tarefaConluidas / totalDeTarefas) * 100 : 0;
-
+  const tarefaFiltrada = minhasTarefas.filter(tarefa => {
+    if (filtro === 'pendentes') return !tarefa.done
+    if (filtro === 'concluidas') return tarefa.done;
+    return true
+  })
 
   return (
     <main className="w-full h-screen bg-gray-100 flex justify-center items-center">
@@ -92,15 +106,29 @@ const Home = () => {
 
         { /**tags de finalizados pendentes e concluidos*/}
         <div className="flex py-2 gap-2">
-          <Badge className="cursor-pointer" variant="default"><List />Todas</Badge>
-          <Badge className="cursor-pointer" variant={"outline"}><X />Pendentes</Badge>
-          <Badge className="cursor-pointer" variant={"outline"}><Check />Concluídas</Badge>
+          <Badge className="cursor-pointer"
+            variant={filtro === 'todas' ? 'default' : 'outline'}
+            onClick={() => setFiltro('todas')}>
+            <List />Todas
+          </Badge>
+
+          <Badge className="cursor-pointer"
+            variant={filtro === 'pendentes' ? 'default' : 'outline'}
+            onClick={() => setFiltro('pendentes')}>
+            <X />Pendentes
+          </Badge>
+
+          <Badge className="cursor-pointer"
+            variant={filtro === 'concluidas' ? 'default' : 'outline'}
+            onClick={() => setFiltro('concluidas')}>
+            <Check /> Concluidas
+          </Badge>
         </div>
 
         {/**Lista de tarefas */}
         <div className="  border-b-1">
 
-          {minhasTarefas.map(task =>
+          {tarefaFiltrada.map(task =>
             <div key={task.id} className="h-10 flex justify-between items-center border-t-1 ">
               <div className="w-1 h-full bg-blue-400"></div>
 
@@ -115,7 +143,7 @@ const Home = () => {
 
                 <Trash
                   size={16}
-                  className="cursor-pointer text-red-500 hover:text-red-700 transition-colors"
+                  className="cursor-pointer transition-colors"
                   onClick={() => handleDeletarTarefa(task.id)}
                 />
               </div>
@@ -128,8 +156,9 @@ const Home = () => {
             <ListCheck size={16} />
             <p className="text-xs">tarefas concluidas ({tarefaConluidas} / {totalDeTarefas})</p>
           </div>
-          <Button className="text-xs h-6 cursor-pointer"><Trash />
-            Limpar tarefas concluidas
+          <Button className="text-xs h-6 cursor-pointer"
+            onClick={handleExcluirTarefaConcluida}>
+            <Trash />Limpar tarefas concluidas
           </Button>
         </div>
 
@@ -143,27 +172,6 @@ const Home = () => {
           <Sigma size={16} />
           <p className="text-xs">{totalDeTarefas} Tarefas no Total</p>
         </div>
-
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <Button className="text-xs h-7 cursor-pointer" variant={"outline"}>Limpar tarefas concluidas</Button>
-          </AlertDialogTrigger>
-
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Tem certeza que deseja excluir x itens ?</AlertDialogTitle>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogAction className="cursor-pointer">Sim, excluir</AlertDialogAction>
-              <AlertDialogCancel className="cursor-pointer">Cancelar</AlertDialogCancel>
-            </AlertDialogFooter>
-
-
-          </AlertDialogContent>
-        </AlertDialog>
-
-
-
 
       </Card >
     </main >
